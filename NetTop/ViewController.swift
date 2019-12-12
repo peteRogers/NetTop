@@ -9,7 +9,7 @@
 import Cocoa
 
 class ViewController: NSViewController {
-    
+    var am = 0
     let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     
     @IBOutlet var statusMenu: NSMenu!
@@ -53,8 +53,25 @@ class ViewController: NSViewController {
            object: outHandle, queue: nil) {  notification -> Void in
             let data = outHandle.availableData
             if data.count > 0 {
-                if let str = NSString(data: data, encoding: String.Encoding.utf8.rawValue) {
-                    print("got output: \(str)")
+                if let str = String(data: data, encoding: String.Encoding(rawValue: String.Encoding.utf8.rawValue)) {
+                    //print("got output: \(str)")
+                     let stringArray = str.split(separator: "\n")
+                     for i in 0...(stringArray.count-1) {
+                        let string = stringArray[i]
+                    
+                        let infos = string.components(separatedBy: ",")
+                       
+                        let processId = infos[1]
+                        if(processId == "Google Chrome H.3033"){
+                             print(processId)
+                            print(infos[4])
+                            let dif = (Int(infos[4]) ?? 0) - self.am
+                            print(dif)
+                            self.am = Int(infos[4]) ?? 0
+                            
+                        }
+                       
+                    }
                 }
                 outHandle.waitForDataInBackgroundAndNotify()
             } else {
